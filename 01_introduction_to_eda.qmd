@@ -1,0 +1,44 @@
+---
+title: "01_exploratory_data_analysis"
+author: "Sergio Uribe"
+format: html
+editor: visual
+---
+
+# Start here
+
+Install the pacman *pacman* package, as a user-friendly package manager for R. Packages in R are collections of functions, data, and code that extend the capabilities of base R. They are developed by the R community and can be installed and loaded into an R session to provide additional functionality for data analysis, visualization, modeling, and more. Packages in R are essential for performing complex data analyses and are a major reason why R is a popular language for statistical computing and data science.
+
+```{r}
+install.packages("pacman")
+```
+
+The *pacman* package It checks whether the package is already installed and installs it if it is not. It also checks whether the package is already loaded and loads it if it is not. This command saves time and reduces errors that may occur when manually installing and loading packages,
+
+# Install the necessary packages
+
+```{r}
+pacman::p_load(tidyverse, #  collection of R packages that provides tools for data manipulation, exploration, and visualization.
+               gtsummary, # generates publication-ready summary tables of data frames and regression models.
+               here, # provides a flexible way to specify file paths by dynamically generating them based on the current working directory, regardless of the operating system.
+               SmartEDA) # used to automatically perform exploratory data analysis on a dataset, including generating summary statistics, correlation matrices, and visualizations
+```
+
+# Load the dataset
+
+```{r}
+# Set the working directory to the root of the project
+here::here()
+```
+
+## Folder structure for data analysis
+
+A good folder structure for data analysis should be organized, easy to navigate, and scalable for future projects. One popular structure is the project-oriented structure, which includes separate directories for data, code, and output.
+
+The **data directory** should contain all the raw and processed data files, as well as any metadata or documentation about the data. It is important to keep the data directory separate from the code directory to avoid accidentally modifying the original data.
+
+The **code directory** should contain all the scripts, functions, and notebooks used for data analysis. It is helpful to organize the code into subdirectories based on their purpose or type, such as data cleaning, exploratory data analysis, and modeling.
+
+The **output directory** should contain all the final products of the analysis, such as reports, visualizations, and tables. It is useful to organize the output directory by project or date, with subdirectories for different versions or drafts.
+
+In addition to these directories, it may be helpful to include a documentation directory for project documentation, a reference directory for external resources, and a results directory for storing intermediate results of analysis.
