@@ -13,7 +13,7 @@ Install the pacman *pacman* package, as a user-friendly package manager for R. P
 install.packages("pacman")
 ```
 
-The *pacman* package It checks whether the package is already installed and installs it if it is not. It also checks whether the package is already loaded and loads it if it is not. This command saves time and reduces errors that may occur when manually installing and loading packages,
+The *pacman* package checks whether the package is already installed and installs it if it is not. It also checks whether the package is already loaded and loads it if it is not. This command saves time and reduces errors that may occur when manually installing and loading packages,
 
 # Install the necessary packages
 
@@ -68,9 +68,14 @@ ggplot(mtcars) +
 ```{r}
 ggplot(mtcars) +
   geom_point(aes(wt, mpg), color = 'red') +
-  geom_text_repel(aes(wt, mpg, label = rownames(mtcars))) +
+  geom_text_repel(aes(x = wt, 
+                      y = mpg,
+                      # color = as.factor(cyl), 
+                      # shape = hp, 
+                      label = rownames(mtcars))) +
   theme_classic() + 
-  labs(title = "Car Weight vs. Fuel Efficiency", 
+  labs(title = "Car Weight vs. Fuel Efficiency",
+       subtitle = "Data from the [insert source here]", 
        x = "Weight (wt)", 
        y = "Miles per Gallon (mpg)", 
        caption = "Data points represent car models in the mtcars dataset. Labels show the model names.")
@@ -98,7 +103,7 @@ EDA is not a formal process with a strict set of rules. More than anything, EDA 
 
 Your goal during EDA is to develop an understanding of your data. The easiest way to do this is to use questions as tools to guide your investigation. When you ask a question, the question focuses your attention on a specific part of your dataset and helps you decide which graphs, models, or transformations to make.
 
-> \"Far better an approximate answer to the right question, which is often vague, than an exact answer to the wrong question, which can always be made precise.\" --- John Tukey
+> "Far better an approximate answer to the right question, which is often vague, than an exact answer to the wrong question, which can always be made precise." --- John Tukey
 
 ### Two useful questions
 
@@ -108,7 +113,7 @@ There is no rule about which questions you should ask to guide your research. Ho
 
 2.  What type of **covariation** occurs **between** my variables?
 
-The rest of this tutorial will look at these two questions. To make the discussion easier, let\'s define some terms...
+The rest of this tutorial will look at these two questions. To make the discussion easier, let's define some terms...
 
 ### Definitions
 
@@ -116,19 +121,17 @@ The rest of this tutorial will look at these two questions. To make the discussi
 
 -   A **value** is the state of a variable when you measure it. The value of a variable may change from measurement to measurement.
 
--   An **observation** or **case** is a set of measurements made under similar conditions (you usually make all of the measurements in an observation at the same time and on the same object). An observation will contain several values, each associated with a different variable. I\'ll sometimes refer to an observation as a case or data point.
+-   An **observation** or **case** is a set of measurements made under similar conditions (you usually make all of the measurements in an observation at the same time and on the same object). An observation will contain several values, each associated with a different variable. I'll sometimes refer to an observation as a case or data point.
 
 -   **Tabular data** is a table of values, each associated with a variable and an observation. Tabular data is **tidy** if each value is placed in its own cell, each variable in its own column, and each observation in its own row.
 
-    So far, all of the data that you\'ve seen has been tidy. In real-life, most data isn\'t tidy, so we\'ll come back to these ideas again in [Data Wrangling](https://tutorials.shinyapps.io/01-Exploratory-Data-Analysis/_w_0a9d7d06/).
-
-`iris` is a famous toy data set that comes with R. The data set describes 150 iris flowers. Each row in `iris` displays a flower\'s sepal and petal dimensions. You can use these measurements to deduce the flower\'s species, which is also displayed in `iris`
+    So far, all of the data that you've seen has been tidy. In real-life, most data isn't tidy, so we'll come back to these ideas again in [Data Wrangling](https://tutorials.shinyapps.io/01-Exploratory-Data-Analysis/_w_0a9d7d06/).
 
 ### What is variation?
 
 **Variation** is the tendency of the values of a variable to change from measurement to measurement. You can see variation easily in real life; if you measure any continuous variable twice---and precisely enough---you will get two different results. This is true even if you measure quantities that are constant, like the speed of light. Each of your measurements will include a small amount of error that varies from measurement to measurement. Categorical variables can also vary if you measure across different objects (e.g. the eye colors of different people), or different times (e.g. the energy levels of an electron at different moments).
 
-Every variable has its own pattern of variation, which can reveal useful information. The best way to understand that pattern is to visualise the distribution of the variable\'s values. How you visualise the distribution of a variable will depend on whether the variable is **categorical** or **continuous**.
+Every variable has its own pattern of variation, which can reveal useful information. The best way to understand that pattern is to visualise the distribution of the variable's values. How you visualise the distribution of a variable will depend on whether the variable is **categorical** or **continuous**.
 
 ## Covariation
 
@@ -200,6 +203,19 @@ penguins %>%
 
 Your turn for flipper_length
 
+```{r}
+penguins %>% 
+  ggplot(aes(x = flipper_length_mm)) +
+  geom_histogram()
+```
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = flipper_length_mm)) +
+  geom_histogram() + 
+  facet_grid(species ~ . )
+```
+
 ## Exercise 2: Plotting Two Variables (Categorical vs. Continuous)
 
 **Research Question: How does the bill length vary among different species of penguins?**
@@ -213,7 +229,24 @@ penguins %>%
   geom_boxplot()
 ```
 
+```{r}
+penguins %>% 
+  ggplot(aes(x = species, 
+             y = bill_length_mm)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.2, width = .2)
+```
+
 Your turn for the weight of the penguins between the islands
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = island, 
+             y = body_mass_g)) +
+  geom_violin() + 
+  geom_boxplot(width = 0.1) +
+  geom_jitter(alpha = 0.1, width = 0.1)
+```
 
 ## Exercise 3: Plotting Two Variables (Two Continuous)
 
@@ -253,11 +286,11 @@ penguins %>%
 ```
 
 ```{r}
-penguins %>% 
-  ggplot(aes(x = bill_length_mm, 
-             y = bill_depth_mm, 
+penguins %>%
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
              color = species)) +
-  geom_point() + 
+  geom_point() +
   geom_smooth(method = "lm")
 ```
 
@@ -293,14 +326,6 @@ penguins %>%
       labs(x = "Bill Depth (mm)", y = "Values") +
       theme_bw()
     ```
-
-```{r}
-ggplot(penguins_long, aes(x = values, y = body_mass_g)) +
-  geom_point() +
-  facet_wrap(~species) +
-  labs(x = "Bill Depth (mm)", y = "Body Mass (g)") +
-  theme_bw()
-```
 
 ```{r}
 gapminder %>%
