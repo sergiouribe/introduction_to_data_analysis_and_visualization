@@ -143,7 +143,7 @@ If variation describes the behavior *within* a variable, covariation describes t
 
 # Exercises EDA
 
-## head
+## head (the chunk, run the code)
 
 ```{r}
 head(penguins)
@@ -155,16 +155,30 @@ head(penguins)
 glimpse(penguins)
 ```
 
+## Filter (the pipe)
+
+```{r}
+penguins %>% 
+  select(species) %>% 
+  summary()
+```
+
 ## summary
 
 ```{r}
 summary(penguins)
 ```
 
-## summary one column
+## summary one column (select)
 
 ```{r}
 summary(penguins$species)
+```
+
+```{r}
+penguins %>% 
+  select(species) %>% 
+  summary()
 ```
 
 ## tables
@@ -213,7 +227,8 @@ model %>%
 ```
 
 ```{r}
-model_log <- glm(species ~  bill_length_mm+ island, data = penguins, family = "binomial")
+
+model_log <- glm(sex ~  bill_length_mm + body_mass_g + island, data = penguins, family = "binomial")
 ```
 
 ```{r}
@@ -349,19 +364,6 @@ penguins %>%
 
 -   In this exercise, we reshape the data to a long format using **`pivot_longer()`** to create a dataset with variables for body mass, bill depth, species, and island. Then, we create a faceted scatter plot using **`ggplot2`** to explore the relationship between body mass and bill depth across different penguin species, considering the influence of island location.
 
-    ```{r}
-    penguins %>%
-      select(body_mass_g, bill_depth_mm, species, island) %>%
-      pivot_longer(cols = c(body_mass_g, bill_depth_mm),
-                   names_to = "measurements",
-                   values_to = "values") %>%
-      ggplot(aes(x = values, y = values)) +
-      geom_point() +
-      facet_wrap(~species) +
-      labs(x = "Bill Depth (mm)", y = "Values") +
-      theme_bw()
-    ```
-
 ```{r}
 gapminder %>%
   # Filter the data for a specific year range
@@ -401,11 +403,5 @@ gapminder %>%
   theme_minimal() +
   scale_y_log10()
   
-
-```
-
-# Reporting summaries and regression analysis
-
-```{r}
 
 ```
