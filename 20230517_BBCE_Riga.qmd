@@ -1,0 +1,221 @@
+---
+title: "Code from the 2022_05_17 presentation, BBCE, Riga, Latvia"
+author: "Sergio Uribe"
+format: html
+editor: visual
+---
+
+# Introduction
+
+This a text, and will not be read or interpret by R
+
+```{r}install the pacman package}
+
+```
+
+First, install the package manager pacman
+
+```{r}
+# install.packages("pacman") # install just once, then is not necessary to install, just to call the package with pacman::
+```
+
+Load the required packages
+
+```{r}
+pacman::p_load(tidyverse, # tools for data warngling and viz
+               SmartEDA, 
+               gtsummary, # to create tabkle summaries
+               janitor, # for tabyl and data cleaning
+               palmerpenguins, # penguins
+               gapminder) # another dataset
+```
+
+# The dataset
+
+```{r}
+penguins
+```
+
+# Basic Data Exploration
+
+```{r}
+glimpse(penguins)
+```
+
+```{r}
+summary(penguins)
+```
+
+```{r}
+summary(penguins$island)
+```
+
+```{r}
+penguins %>% 
+  select(island) %>% 
+  summary()
+```
+
+## Tables
+
+```{r}
+penguins %>% 
+  janitor::tabyl(species, island) %>% 
+  janitor::adorn_percentages("row") %>% 
+  janitor::adorn_pct_formatting(digits = 1) %>% 
+  janitor::adorn_ns()
+```
+
+```{r}
+penguins %>% 
+  janitor::tabyl(species, sex) %>% 
+  janitor::adorn_percentages("row") %>% 
+  janitor::adorn_pct_formatting(digits = 1) %>% 
+  janitor::adorn_ns()
+```
+
+## SmartEDA
+
+```{r}
+# mtcars %>% 
+#   SmartEDA::ExpReport(op_file = "exploratory_report.html")
+
+```
+
+## gtsummary
+
+```{r}
+penguins %>% 
+  gtsummary::tbl_summary(by = species)
+```
+
+# Plotting the penguins
+
+## One variable
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = body_mass_g)) + 
+  geom_histogram()
+```
+Ok, but there are three species! Then, two alternatives
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = body_mass_g, 
+             fill = species)) + # add the aes fill to identify the species 
+  geom_histogram(alpha = .5) # and add some level of transparency
+```
+or create several facets
+```{r}
+penguins %>%
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram() +
+  facet_grid(species ~ .)
+```
+### Add the sex
+
+
+```{r}
+penguins %>%
+  filter(!is.na(sex)) %>%  # removing the sex = NA
+  ggplot(aes(x = flipper_length_mm,
+             fill = sex)) +
+  geom_histogram(bins = 10, alpha = 0.5) +
+  facet_grid(species ~ .)
+```
+
+## Two variables
+Explore the association for weight and flipper length
+```{r}
+penguins %>% 
+  ggplot(aes(x = body_mass_g, 
+             y = flipper_length_mm)) + 
+  geom_point()
+```
+Again, we have three species, so several options to identify the relationship for each specie: 
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = body_mass_g, 
+             y = flipper_length_mm, 
+             color = species)) + 
+  geom_point()
+```
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = body_mass_g, 
+             y = flipper_length_mm, 
+             color = species)) + 
+  geom_point() + 
+  facet_grid(. ~ species )
+```
+
+## Adding title, y axis, etc
+```{r}
+penguins %>%   
+  ggplot(aes( x = body_mass_g,          # the aes
+              y = flipper_length_mm, 
+              
+              color = species)) +
+  geom_point(alpha = .4) +
+  theme_classic() +  # change the theme, try other themes as well
+  labs(title = "The title", 
+       subtitle = "The subtitle", 
+       y = "The y axis", 
+       x = "The x axis", 
+       color = "The legend", 
+       caption = "Some caption")
+```
+
+## Transform the data and then plot
+
+Change g to k for the body_mass_g
+
+```{r}
+penguins %>%   
+  # transform the data
+  mutate(body_mass_k = body_mass_g / 1000) %>%  # create a new variable
+  
+  # then make the plot
+  ggplot(aes( x = body_mass_k,          # now I refer to the new variable
+              y = flipper_length_mm, 
+              
+              color = species)) +
+  geom_point(alpha = .4) +
+  theme_classic() +  # change the theme, try other themes as well
+  labs(title = "The title", 
+       subtitle = "The subtitle", 
+       y = "The y axis", 
+       x = "The x axis, but in k, not in g", 
+       color = "The legend", 
+       caption = "Some caption")
+```
+
+
+## changing the y axis
+
+```{r}
+penguins %>%   
+  # transform the data
+  mutate(body_mass_k = body_mass_g / 1000) %>%  # create a new variable
+  
+  # then make the plot
+  ggplot(aes( x = body_mass_k,          # now I refer to the new variable
+              y = flipper_length_mm, 
+              
+              color = species)) +
+  geom_point(alpha = .4) +
+  theme_classic() +  # change the theme, try other themes as well
+  labs(title = "The title", 
+       subtitle = "The subtitle", 
+       y = "The y axis", 
+       x = "The x axis, but in k, not in g", 
+       color = "The legend", 
+       caption = "Some caption") + 
+  ylim(0, 250)
+```
+
+
+
