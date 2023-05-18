@@ -1,0 +1,118 @@
+---
+title: "My_analysis"
+author: "Sergio Uribe"
+format: html
+editor: visual
+---
+
+## Quarto
+
+This a text, and will not be read or interpret by R
+
+```{r}install the pacman package}
+
+```
+
+First, install the package manager pacman
+
+```{r}
+install.packages("pacman")
+```
+
+Load the required packages
+
+```{r}
+pacman::p_load(tidyverse, # tools for data warngling and viz
+               SmartEDA, 
+               gtsummary, # to create tabkle summaries
+               janitor, # for tabyl and data cleaning
+               palmerpenguins, # penguins
+               gapminder) # another dataset
+```
+
+# The dataset
+
+```{r}
+penguins
+```
+
+# Data exploration
+
+```{r}
+glimpse(penguins)
+```
+
+```{r}
+summary(penguins)
+```
+
+```{r}
+summary(penguins$island)
+```
+
+```{r}
+penguins %>% 
+  select(island) %>% 
+  summary()
+```
+
+## Tables
+
+```{r}
+penguins %>% 
+  janitor::tabyl(species, island) %>% 
+  janitor::adorn_percentages("row") %>% 
+  janitor::adorn_pct_formatting(digits = 1) %>% 
+  janitor::adorn_ns()
+```
+
+```{r}
+penguins %>% 
+  janitor::tabyl(species, sex) %>% 
+  janitor::adorn_percentages("row") %>% 
+  janitor::adorn_pct_formatting(digits = 1) %>% 
+  janitor::adorn_ns()
+```
+
+## SmartEDA
+
+```{r}
+# mtcars %>% 
+#   SmartEDA::ExpReport(op_file = "exploratory_report.html")
+
+```
+
+## gtsummary
+
+```{r}
+penguins %>% 
+  gtsummary::tbl_summary(by = species)
+```
+
+# Plotting the penguins
+
+```{r}
+penguins %>%   
+  # transform the data
+  mutate(body_mass_g = log10(body_mass_g)) %>% 
+  
+  
+  # and then plot
+  ggplot(aes( x = body_mass_g,          # the aes
+              y = flipper_length_mm, 
+              
+              color = bill_depth_mm)) +
+  geom_point(alpha = .3) +
+  theme_classic() +
+  labs(title = "My first graph", 
+       subtitle = "The subtitle", 
+       y = "the y axis", 
+       x = "log10 body mass")
+```
+
+```{r}
+penguins %>% 
+  ggplot(aes(x = flipper_length_mm)) +
+  geom_histogram(bins = 10) + 
+  facet_grid( sex ~ species )
+```
